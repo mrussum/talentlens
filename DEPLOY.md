@@ -18,7 +18,7 @@ cd backend
 fly auth login
 ```
 
-The repo ships a ready-made `fly.toml` set up for app name `talentlens-api` in
+The repo ships a ready-made `fly.toml` set up for app name `talentlens` in
 region `lhr`. If that name is taken, edit the `app =` line at the top of
 `backend/fly.toml` first (or run `fly launch --no-deploy` to do it
 interactively — say "no" when it asks to overwrite the existing fly.toml, or
@@ -27,7 +27,7 @@ interactively — say "no" when it asks to overwrite the existing fly.toml, or
 Create the app (one-off):
 
 ```bash
-fly apps create talentlens-api   # skip if you used `fly launch`
+fly apps create talentlens   # skip if you used `fly launch`
 ```
 
 Set your secrets (NOT in `fly.toml`):
@@ -47,7 +47,7 @@ fly deploy
 After a couple of minutes you should be able to hit:
 
 ```bash
-curl https://talentlens-api.fly.dev/api/health
+curl https://talentlens.fly.dev/api/health
 # -> {"status":"ok","version":"1.0.0"}
 ```
 
@@ -68,7 +68,7 @@ You can do this from the dashboard or CLI. Dashboard is simpler the first time.
    `vercel.json`: `npm run build`, `dist`).
 5. **Environment variables** — add one:
    - Name: `VITE_API_BASE`
-   - Value: `https://talentlens-api.fly.dev/api` (replace with your Fly URL)
+   - Value: `https://talentlens.fly.dev/api` (replace with your Fly URL)
    - Apply to: Production + Preview + Development
 6. Click **Deploy**.
 
@@ -89,7 +89,7 @@ You'll get a URL like `https://talentlens-mrussum.vercel.app`.
 Now that you know the Vercel domain, tell the backend to trust it:
 
 ```bash
-fly secrets set CORS_ALLOWED_ORIGINS=https://talentlens-mrussum.vercel.app,http://localhost:5173 -a talentlens-api
+fly secrets set CORS_ALLOWED_ORIGINS=https://talentlens-mrussum.vercel.app,http://localhost:5173 -a talentlens
 ```
 
 Setting a secret triggers a redeploy automatically.
@@ -108,7 +108,7 @@ If you use Vercel preview deployments (each PR gets its own URL like
 4. You should get a structured report back in 3–5 seconds.
 
 If you get a CORS error in the browser console, double-check step 3.
-If you get a 500 from `/api/generate`, check `fly logs -a talentlens-api`
+If you get a 500 from `/api/generate`, check `fly logs -a talentlens`
 — most often it's a missing or invalid `ANTHROPIC_API_KEY`.
 
 ## Updating

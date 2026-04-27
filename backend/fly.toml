@@ -1,8 +1,7 @@
 # Fly.io configuration for the TalentLens FastAPI backend.
-# Generated for app name "talentlens-api" — change `app` if that name is taken
-# (run `fly launch` for an interactive setup, or just edit this line).
+# Change `app` if you rename the app on Fly (must match `fly apps list`).
 
-app = "talentlens-api"
+app = "talentlens"
 primary_region = "lhr"
 
 [build]
