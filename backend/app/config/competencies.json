@@ -1,0 +1,31 @@
+{
+  "saville_wave": {
+    "label": "Saville Wave Professional",
+    "competencies": [
+      "Adapting Approaches",
+      "Articulating Information",
+      "Challenging Ideas",
+      "Conveying Self-Confidence",
+      "Developing Expertise",
+      "Driving Success",
+      "Embracing Change",
+      "Empowering Individuals",
+      "Establishing Rapport",
+      "Interacting with People",
+      "Making Decisions",
+      "Pursuing Goals"
+    ]
+  },
+  "general": {
+    "label": "General Leadership Framework",
+    "competencies": [
+      "Communication",
+      "Problem Solving",
+      "Leadership",
+      "Collaboration",
+      "Adaptability",
+      "Drive & Motivation",
+      "Technical Ability"
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+services:
+  backend:
+    build: ./backend
+    container_name: talentlens-backend
+    environment:
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      CLAUDE_MODEL: ${CLAUDE_MODEL:-claude-sonnet-4-20250514}
+      CLAUDE_MAX_TOKENS: ${CLAUDE_MAX_TOKENS:-2400}
+      CLAUDE_TEMPERATURE: ${CLAUDE_TEMPERATURE:-0.3}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:5173}
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health').read()"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        # The browser reaches the backend on the host-exposed port (the Vite dev
+        # proxy is dev-only — in this prod build the bundle calls the API directly).
+        VITE_API_BASE: ${VITE_API_BASE:-http://localhost:8000/api}
+    container_name: talentlens-frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    restart: unless-stopped
