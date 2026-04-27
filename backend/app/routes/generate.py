@@ -3,7 +3,7 @@ import time
 from functools import lru_cache
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 
 from app.config.frameworks import (
     FrameworkNotFoundError,
@@ -23,6 +23,7 @@ from app.services.claude_service import (
 )
 from app.utils.logging import log_event
 from app.utils.prompt_builder import PROMPT_VERSION
+from app.utils.rate_limit import limiter
 from app.utils.sanitise import sanitise_notes
 
 logger = logging.getLogger("talentlens.api")
@@ -54,12 +55,14 @@ def list_frameworks() -> FrameworksResponse:
 
 
 @router.post("/generate", response_model=GenerateResponse)
+@limiter.limit("10/minute")
 def generate_report(
-    request: GenerateRequest,
+    request: Request,
+    payload: GenerateRequest,
     service: ClaudeService = Depends(get_claude_service),
 ) -> GenerateResponse:
     started = time.perf_counter()
-    framework_key = request.competency_framework or "saville_wave"
+    framework_key = payload.competency_framework or "saville_wave"
 
     try:
         framework = get_framework(framework_key)
@@ -80,7 +83,7 @@ def generate_report(
 
     framework_label = str(framework.get("label", framework_key))
     competencies = list_competencies(framework_key)
-    sanitised_notes = sanitise_notes(request.notes)
+    sanitised_notes = sanitise_notes(payload.notes)
     if len(sanitised_notes) < 50:
         latency_ms = int((time.perf_counter() - started) * 1000)
         return GenerateResponse(
@@ -99,7 +102,7 @@ def generate_report(
             notes=sanitised_notes,
             framework_label=framework_label,
             competencies=competencies,
-            role=request.role,
+            role=payload.role,
         )
         competency_count = len(result.report.competencies)
         fit_score = result.report.fit_score
